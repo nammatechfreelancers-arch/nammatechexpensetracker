@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, Text, View } from 'react-native';
 import { BudgetForm, GoalForm } from '../components/forms';
 import { AppIcon } from '../components/icons';
 import { GlassCard, Header, IconButton, PrimaryButton, ProgressBar, Screen, sectionTitle, styles } from '../components/ui';
@@ -83,12 +83,16 @@ export const BudgetsScreen = () => {
                     label="Delete goal"
                     theme={theme}
                     tone="danger"
-                    onPress={() =>
+                    onPress={() => {
+                      if (Platform.OS === 'web') {
+                        if (window.confirm('Delete this goal?')) deleteGoal(goal.id);
+                        return;
+                      }
                       Alert.alert('Delete goal?', 'This only removes the local goal.', [
                         { text: 'Cancel', style: 'cancel' },
                         { text: 'Delete', style: 'destructive', onPress: () => deleteGoal(goal.id) },
-                      ])
-                    }
+                      ]);
+                    }}
                   />
                 </View>
                 <ProgressBar value={percent} theme={theme} color={goal.color} />

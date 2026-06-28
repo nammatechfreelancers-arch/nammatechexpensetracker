@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, Text, View } from 'react-native';
 import { TransactionForm } from '../components/forms';
 import { AppIcon } from '../components/icons';
 import { Chip, Field, GlassCard, Header, IconButton, PrimaryButton, Screen, styles } from '../components/ui';
@@ -44,6 +44,10 @@ export const TransactionsScreen = () => {
   }, [categoryId, filterType, query, sort, state.categories, state.transactions]);
 
   const confirmDelete = (id: string) => {
+    if (Platform.OS === 'web') {
+      if (window.confirm('Delete this transaction?')) deleteTransaction(id);
+      return;
+    }
     Alert.alert('Delete transaction?', 'This removes it from local storage on this device.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Delete', style: 'destructive', onPress: () => deleteTransaction(id) },
