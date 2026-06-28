@@ -8,6 +8,22 @@ import { themes } from '../theme/palettes';
 import { Budget, SavingsGoal } from '../types';
 import { categoryFor, formatMoney, isSameDay, spentForBudget } from '../utils/finance';
 
+const ConfirmDialog = ({ message, onConfirm, onCancel, theme }: { message: string; onConfirm: () => void; onCancel: () => void; theme: any }) => (
+  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+    <View style={{ backgroundColor: theme.surface, borderRadius: 20, padding: 24, margin: 24, gap: 16, borderWidth: 1, borderColor: theme.border }}>
+      <Text style={{ color: theme.text, fontSize: 17, fontWeight: '800', textAlign: 'center' }}>{message}</Text>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <Pressable onPress={onCancel} style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: theme.subtle, alignItems: 'center' }}>
+          <Text style={{ color: theme.text, fontWeight: '800' }}>Cancel</Text>
+        </Pressable>
+        <Pressable onPress={onConfirm} style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: theme.danger, alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontWeight: '800' }}>Delete</Text>
+        </Pressable>
+      </View>
+    </View>
+  </View>
+);
+
 export const BudgetsScreen = () => {
   const { state, upsertBudget, addGoal, updateGoal, deleteGoal } = useAppStore();
   const theme = themes[state.settings.theme];
@@ -15,10 +31,20 @@ export const BudgetsScreen = () => {
   const [goalForm, setGoalForm] = useState<SavingsGoal | 'new' | undefined>();
   const [selectedDay, setSelectedDay] = useState(new Date());
 
+  const [pendingDeleteGoalId, setPendingDeleteGoalId] = useState<string | undefined>();
+
   const selectedTransactions = state.transactions.filter(transaction => isSameDay(transaction.date, selectedDay));
 
   return (
     <Screen theme={theme}>
+      {pendingDeleteGoalId ? (
+        <ConfirmDialog
+          message="Delete this goal?"
+          theme={theme}
+          onCancel={() => setPendingDeleteGoalId(undefined)}
+          onConfirm={() => { deleteGoal(pendingDeleteGoalId); setPendingDeleteGoalId(undefined); }}
+        />
+      ) : null}
       <Header
         eyebrow="Plan"
         title="Budgets"
@@ -83,16 +109,7 @@ export const BudgetsScreen = () => {
                     label="Delete goal"
                     theme={theme}
                     tone="danger"
-                    onPress={() => {
-                      if (Platform.OS === 'web') {
-                        if (window.confirm('Delete this goal?')) deleteGoal(goal.id);
-                        return;
-                      }
-                      Alert.alert('Delete goal?', 'This only removes the local goal.', [
-                        { text: 'Cancel', style: 'cancel' },
-                        { text: 'Delete', style: 'destructive', onPress: () => deleteGoal(goal.id) },
-                      ]);
-                    }}
+                    onPress={() => setPendingDeleteGoalId(goal.id)}
                   />
                 </View>
                 <ProgressBar value={percent} theme={theme} color={goal.color} />

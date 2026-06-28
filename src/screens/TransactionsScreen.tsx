@@ -10,6 +10,22 @@ import { categoryFor, formatMoney } from '../utils/finance';
 
 const sortModes: SortMode[] = ['Newest', 'Oldest', 'Amount High', 'Amount Low'];
 
+const ConfirmDialog = ({ message, onConfirm, onCancel, theme }: { message: string; onConfirm: () => void; onCancel: () => void; theme: any }) => (
+  <View style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', zIndex: 999 }}>
+    <View style={{ backgroundColor: theme.surface, borderRadius: 20, padding: 24, margin: 24, gap: 16, borderWidth: 1, borderColor: theme.border }}>
+      <Text style={{ color: theme.text, fontSize: 17, fontWeight: '800', textAlign: 'center' }}>{message}</Text>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
+        <Pressable onPress={onCancel} style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: theme.subtle, alignItems: 'center' }}>
+          <Text style={{ color: theme.text, fontWeight: '800' }}>Cancel</Text>
+        </Pressable>
+        <Pressable onPress={onConfirm} style={{ flex: 1, padding: 14, borderRadius: 14, backgroundColor: theme.danger, alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontWeight: '800' }}>Delete</Text>
+        </Pressable>
+      </View>
+    </View>
+  </View>
+);
+
 export const TransactionsScreen = () => {
   const { state, addTransaction, updateTransaction, deleteTransaction, duplicateTransaction } = useAppStore();
   const theme = themes[state.settings.theme];
@@ -43,19 +59,29 @@ export const TransactionsScreen = () => {
     });
   }, [categoryId, filterType, query, sort, state.categories, state.transactions]);
 
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | undefined>();
+
   const confirmDelete = (id: string) => {
-    if (Platform.OS === 'web') {
-      if (window.confirm('Delete this transaction?')) deleteTransaction(id);
+    if (Platform.OS !== 'web') {
+      Alert.alert('Delete transaction?', 'This removes it from local storage.', [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', style: 'destructive', onPress: () => deleteTransaction(id) },
+      ]);
       return;
     }
-    Alert.alert('Delete transaction?', 'This removes it from local storage on this device.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Delete', style: 'destructive', onPress: () => deleteTransaction(id) },
-    ]);
+    setPendingDeleteId(id);
   };
 
   return (
     <Screen theme={theme}>
+      {pendingDeleteId ? (
+        <ConfirmDialog
+          message="Delete this transaction?"
+          theme={theme}
+          onCancel={() => setPendingDeleteId(undefined)}
+          onConfirm={() => { deleteTransaction(pendingDeleteId); setPendingDeleteId(undefined); }}
+        />
+      ) : null}
       <Header
         eyebrow="Ledger"
         title="Transactions"
