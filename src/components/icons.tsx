@@ -1,0 +1,117 @@
+import {
+  Activity,
+  BarChart3,
+  BellRing,
+  Briefcase,
+  Building2,
+  CalendarDays,
+  Car,
+  Check,
+  ChevronDown,
+  CircleDollarSign,
+  Copy,
+  CreditCard,
+  Download,
+  Edit3,
+  Eye,
+  EyeOff,
+  FileJson,
+  Fingerprint,
+  GraduationCap,
+  HeartPulse,
+  Home,
+  Image,
+  LineChart,
+  Lock,
+  Moon,
+  MoreHorizontal,
+  Palette,
+  Plane,
+  Plus,
+  Receipt,
+  Search,
+  Settings,
+  Shield,
+  ShoppingBag,
+  Sparkles,
+  Target,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  Upload,
+  Utensils,
+  WalletCards,
+  X,
+} from 'lucide-react-native';
+import { ColorValue } from 'react-native';
+
+const iconMap = {
+  activity: Activity,
+  'bar-chart-3': BarChart3,
+  'bell-ring': BellRing,
+  briefcase: Briefcase,
+  'building-2': Building2,
+  'calendar-days': CalendarDays,
+  car: Car,
+  check: Check,
+  'chevron-down': ChevronDown,
+  'circle-dollar-sign': CircleDollarSign,
+  copy: Copy,
+  'credit-card': CreditCard,
+  download: Download,
+  edit: Edit3,
+  eye: Eye,
+  'eye-off': EyeOff,
+  'file-json': FileJson,
+  fingerprint: Fingerprint,
+  'graduation-cap': GraduationCap,
+  'heart-pulse': HeartPulse,
+  home: Home,
+  image: Image,
+  'line-chart': LineChart,
+  lock: Lock,
+  moon: Moon,
+  more: MoreHorizontal,
+  palette: Palette,
+  plane: Plane,
+  plus: Plus,
+  receipt: Receipt,
+  search: Search,
+  settings: Settings,
+  shield: Shield,
+  'shopping-bag': ShoppingBag,
+  sparkles: Sparkles,
+  target: Target,
+  trash: Trash2,
+  'trending-down': TrendingDown,
+  'trending-up': TrendingUp,
+  upload: Upload,
+  utensils: Utensils,
+  wallet: WalletCards,
+  x: X,
+};
+
+export type IconName = keyof typeof iconMap;
+
+export const AppIcon = ({
+  name,
+  color,
+  size = 20,
+  strokeWidth = 2.2,
+}: {
+  name: string;
+  color: ColorValue;
+  size?: number;
+  strokeWidth?: number;
+}) => {
+  const Icon = iconMap[(name in iconMap ? name : 'circle-dollar-sign') as IconName];
+  return <Icon color={color} size={size} strokeWidth={strokeWidth} />;
+};
+
+export const tabIcons = {
+  Dashboard: Home,
+  Transactions: WalletCards,
+  Analytics: BarChart3,
+  Budgets: Target,
+  Settings: Settings,
+};

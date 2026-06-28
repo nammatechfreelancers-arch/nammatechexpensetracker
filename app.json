@@ -1,25 +1,21 @@
 {
   "expo": {
-    "name": "expense-tracker-iphone",
+    "name": "Lumora Expense Tracker",
     "slug": "expense-tracker-iphone",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
+    "userInterfaceStyle": "automatic",
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "single",
+      "name": "Lumora Expense Tracker",
+      "shortName": "Lumora",
+      "description": "Offline-first personal finance tracker",
+      "themeColor": "#0F766E",
+      "backgroundColor": "#F6F7FB"
+    },
+    "plugins": []
   }
 }
